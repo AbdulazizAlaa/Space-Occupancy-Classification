@@ -10,6 +10,8 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn import preprocessing
 from sklearn.decomposition import PCA
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+from sklearn.neural_network import MLPClassifier
+from sklearn.neighbors import KNeighborsClassifier
 import matplotlib.pyplot as plt
 ```
 
@@ -90,7 +92,7 @@ error = (num_wrong/num_rows)*100
 print("Number of mislabeled points out of a total %d points : %d with error: %f %%" % (num_rows,num_wrong, error))
 ```
 
-    Number of mislabeled points out of a total 6169 points : 201 with error: 3.258227 %
+    Number of mislabeled points out of a total 6169 points : 207 with error: 3.355487 %
 
 
 ###### Shuffling the data & Spliting 60% for training
@@ -125,7 +127,7 @@ error = (num_wrong/num_rows)*100
 print("Number of mislabeled points out of a total %d points : %d with error: %f %%" % (num_rows,num_wrong, error))
 ```
 
-    Number of mislabeled points out of a total 8224 points : 253 with error: 3.076362 %
+    Number of mislabeled points out of a total 8224 points : 274 with error: 3.331712 %
 
 
 ###### Shuffling the data & Spliting 50% for training
@@ -160,7 +162,7 @@ error = (num_wrong/num_rows)*100
 print("Number of mislabeled points out of a total %d points : %d with error: %f %%" % (num_rows,num_wrong, error))
 ```
 
-    Number of mislabeled points out of a total 10280 points : 354 with error: 3.443580 %
+    Number of mislabeled points out of a total 10280 points : 350 with error: 3.404669 %
 
 
 ###### Scaling the data (normalizing) ,then Shuffling it ,then Spliting it 70% for training
@@ -296,6 +298,174 @@ print("Number of mislabeled points out of a total %d points : %d with error: %f 
 ```
 
     Number of mislabeled points out of a total 6169 points : 90 with error: 1.458907 %
+
+
+###### KNN 
+
+
+```python
+train_split = 0.7
+rows = data.shape[0]
+train_rows = (int) (train_split*rows)
+#splitting data
+tmp_train = data[:train_rows]
+tmp_test = data[train_rows:]
+#splitting training into target and input 
+target = tmp_train["Occupancy"]
+in_data = tmp_train.drop(["date", "Occupancy"], axis=1)
+#splitting training into target and input
+target_test = tmp_test["Occupancy"]
+in_test = tmp_test.drop(["date", "Occupancy"], axis=1)
+
+print("----------------------------------")
+print("K = 3")
+neigh = KNeighborsClassifier(n_neighbors=3)
+neigh.fit(in_data, target)
+
+y_pred = neigh.predict(in_test)
+num_rows = in_test.shape[0]
+num_wrong = (target_test != y_pred).sum()
+error = (num_wrong/num_rows)*100
+print("Number of mislabeled points out of a total %d points : %d with error: %f %%" % (num_rows,num_wrong, error))
+
+print("----------------------------------")
+print("K = 5")
+neigh = KNeighborsClassifier(n_neighbors=5)
+neigh.fit(in_data, target)
+
+y_pred = neigh.predict(in_test)
+num_rows = in_test.shape[0]
+num_wrong = (target_test != y_pred).sum()
+error = (num_wrong/num_rows)*100
+print("Number of mislabeled points out of a total %d points : %d with error: %f %%" % (num_rows,num_wrong, error))
+
+print("----------------------------------")
+print("K = 8")
+neigh = KNeighborsClassifier(n_neighbors=8)
+neigh.fit(in_data, target)
+
+y_pred = neigh.predict(in_test)
+num_rows = in_test.shape[0]
+num_wrong = (target_test != y_pred).sum()
+error = (num_wrong/num_rows)*100
+print("Number of mislabeled points out of a total %d points : %d with error: %f %%" % (num_rows,num_wrong, error))
+
+print("----------------------------------")
+print("K = 10")
+neigh = KNeighborsClassifier(n_neighbors=10)
+neigh.fit(in_data, target)
+
+y_pred = neigh.predict(in_test)
+num_rows = in_test.shape[0]
+num_wrong = (target_test != y_pred).sum()
+error = (num_wrong/num_rows)*100
+print("Number of mislabeled points out of a total %d points : %d with error: %f %%" % (num_rows,num_wrong, error))
+
+print("----------------------------------")
+print("K = 20")
+neigh = KNeighborsClassifier(n_neighbors=20)
+neigh.fit(in_data, target)
+
+y_pred = neigh.predict(in_test)
+num_rows = in_test.shape[0]
+num_wrong = (target_test != y_pred).sum()
+error = (num_wrong/num_rows)*100
+print("Number of mislabeled points out of a total %d points : %d with error: %f %%" % (num_rows,num_wrong, error))
+```
+
+    ----------------------------------
+    K = 3
+    Number of mislabeled points out of a total 6169 points : 146 with error: 2.366672 %
+    ----------------------------------
+    K = 5
+    Number of mislabeled points out of a total 6169 points : 120 with error: 1.945210 %
+    ----------------------------------
+    K = 8
+    Number of mislabeled points out of a total 6169 points : 92 with error: 1.491328 %
+    ----------------------------------
+    K = 10
+    Number of mislabeled points out of a total 6169 points : 96 with error: 1.556168 %
+    ----------------------------------
+    K = 20
+    Number of mislabeled points out of a total 6169 points : 82 with error: 1.329227 %
+
+
+###### Neural Networks
+
+
+```python
+train_split = 0.7
+rows = data.shape[0]
+train_rows = (int) (train_split*rows)
+#splitting data
+tmp_train = data[:train_rows]
+tmp_test = data[train_rows:]
+#splitting training into target and input 
+target = np.asarray(tmp_train["Occupancy"])
+in_data = np.asarray(tmp_train.drop(["date", "Occupancy"], axis=1))
+#splitting training into target and input
+target_test = np.asarray(tmp_test["Occupancy"])
+in_test = np.asarray(tmp_test.drop(["date", "Occupancy"], axis=1))
+
+print("---------------------------------------")
+print("MLP 5-->20-->2")
+clf = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(5, 20, 2), random_state=1)
+clf.fit(in_data, target)
+
+y_pred = clf.predict(in_test)
+num_rows = in_test.shape[0]
+num_wrong = (target_test != y_pred).sum()
+error = (num_wrong/num_rows)*100
+print("Number of mislabeled points out of a total %d points : %d with error: %f %%" % (num_rows,num_wrong, error))
+
+print("---------------------------------------")
+print("MLP 5-->50-->2")
+clf = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(5, 50, 2), random_state=1)
+clf.fit(in_data, target)
+
+y_pred = clf.predict(in_test)
+num_rows = in_test.shape[0]
+num_wrong = (target_test != y_pred).sum()
+error = (num_wrong/num_rows)*100
+print("Number of mislabeled points out of a total %d points : %d with error: %f %%" % (num_rows,num_wrong, error))
+
+print("---------------------------------------")
+print("MLP 5-->100-->2")
+clf = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(5, 100, 2), random_state=1)
+clf.fit(in_data, target)
+
+y_pred = clf.predict(in_test)
+num_rows = in_test.shape[0]
+num_wrong = (target_test != y_pred).sum()
+error = (num_wrong/num_rows)*100
+print("Number of mislabeled points out of a total %d points : %d with error: %f %%" % (num_rows,num_wrong, error))
+
+print("---------------------------------------")
+print("MLP 5-->100-->40-->2")
+clf = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(5, 100, 40, 2), random_state=1)
+clf.fit(in_data, target)
+
+y_pred = clf.predict(in_test)
+num_rows = in_test.shape[0]
+num_wrong = (target_test != y_pred).sum()
+error = (num_wrong/num_rows)*100
+print("Number of mislabeled points out of a total %d points : %d with error: %f %%" % (num_rows,num_wrong, error))
+
+
+```
+
+    ---------------------------------------
+    MLP 5-->20-->2
+    Number of mislabeled points out of a total 6169 points : 1097 with error: 17.782461 %
+    ---------------------------------------
+    MLP 5-->50-->2
+    Number of mislabeled points out of a total 6169 points : 1097 with error: 17.782461 %
+    ---------------------------------------
+    MLP 5-->100-->2
+    Number of mislabeled points out of a total 6169 points : 326 with error: 5.284487 %
+    ---------------------------------------
+    MLP 5-->100-->40-->2
+    Number of mislabeled points out of a total 6169 points : 28 with error: 0.453882 %
 
 
 
